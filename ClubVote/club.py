@@ -4,15 +4,20 @@ import datetime
 
 
 class Club:
-    def __init__(self, members=None, voting_round=None):
+    def __init__(self, members=None, voting_rounds=None):
         self.members = members if members is not None else []
-        self.voting_round = voting_round if voting_round is not None else []
+        self.voting_rounds = voting_rounds if voting_rounds is not None else []
 
     def add_member(self, member):
         self.members.append(member)
     
-    def add_voting_round(self, voting_round):
-        self.voting_round.append(voting_round)
+    def add_voting_round(self, voting_rounds):
+        self.voting_rounds.append(voting_rounds)
+
+    def get_current_voting_round(self):
+        if self.voting_rounds:
+            return self.voting_rounds[-1]
+        return None
 
 class Member:
     def __init__(self, name, ID=None):

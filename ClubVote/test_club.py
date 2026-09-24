@@ -179,6 +179,57 @@ class TestVotingRound(unittest.TestCase):
 
         with self.assertRaises(ValueError):
             self.septemberVotingRound.add_ballot(ballot2)
+
+    def test_get_current_voting_round_when_empty(self):
+        club = Club()
+
+        self.assertIsNone(club.get_current_voting_round())
+
+    def test_get_current_voting_round_returns_newest(self):
+        first_round = VotingRound(
+            start_time=datetime.date.today(),
+            end_time=datetime.date.today() + datetime.timedelta(days=7)
+        )
+
+        second_round = VotingRound(
+            start_time=datetime.date.today(),
+            end_time=datetime.date.today() + datetime.timedelta(days=2)
+        )
+
+        self.club.add_voting_round(first_round)
+        self.club.add_voting_round(second_round)
+
+        self.assertIs(
+            self.club.get_current_voting_round(),
+            second_round
+        )
+
+    def test_club_tracks_runoff_as_current_round(self):
+        ballot1 = Ballot(
+            self.bob,
+            [self.dark_knight, self.angry_men, self.persona]
+        )
+
+        ballot2 = Ballot(
+            self.joy,
+            [self.persona, self.dark_knight, self.angry_men]
+        )
+        self.club.add_voting_round(self.septemberVotingRound)
+        self.septemberVotingRound.add_ballot(ballot1)
+        self.septemberVotingRound.add_ballot(ballot2)
+
+        self.septemberVotingRound.tally_votes()
+
+        runoff = self.septemberVotingRound.get_winner()
+
+        self.club.add_voting_round(runoff)
+
+        self.assertEqual(len(self.club.voting_rounds), 2)
+
+        self.assertIs(
+            self.club.get_current_voting_round(),
+            runoff
+        )
 if __name__ == "__main__":
     unittest.main()
 

@@ -52,6 +52,8 @@ class VotingRound:
 
     def add_ballot(self, ballot):
         current_time = datetime.date.today()
+        if not self.is_running:
+            raise ValueError("Voting is not currently running.")
         if (len(ballot.ranked_choices) != self.num_choices):
             raise ValueError(f"Ballot has incorrect number of choices for this voting round")
         else:
@@ -79,6 +81,7 @@ class VotingRound:
             self.is_running = False
             return self.winner
         elif len(winners) > 1:
+            self.is_running = False
             for candidate in winners:
                 print(f"Tie: {candidate.name} with {max_votes} votes.")
             runoff_round = VotingRound(start_time=datetime.date.today(), end_time=datetime.date.today() + datetime.timedelta(days=2), num_choices = len(winners))

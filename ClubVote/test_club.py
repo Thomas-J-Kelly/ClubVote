@@ -129,6 +129,56 @@ class TestVotingRound(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.septemberVotingRound.get_winner()
 
+    def test_winner_closes_round(self):
+        ballot = Ballot(
+            self.bob,
+            [self.dark_knight, self.angry_men, self.persona]
+        )
+
+        self.septemberVotingRound.add_ballot(ballot)
+        self.septemberVotingRound.tally_votes()
+        self.septemberVotingRound.get_winner()
+
+        self.assertFalse(self.septemberVotingRound.is_running)
+
+    def test_runoff_closes_original_round(self):
+        ballot1 = Ballot(
+            self.bob,
+            [self.dark_knight, self.persona, self.angry_men]
+        )
+
+        ballot2 = Ballot(
+            self.joy,
+            [self.persona, self.dark_knight, self.angry_men]
+        )
+
+        self.septemberVotingRound.add_ballot(ballot1)
+        self.septemberVotingRound.add_ballot(ballot2)
+
+        self.septemberVotingRound.tally_votes()
+
+        runoff = self.septemberVotingRound.get_winner()
+
+        self.assertFalse(self.septemberVotingRound.is_running)
+        self.assertTrue(runoff.is_running)
+
+    def test_completed_round_rejects_ballot(self):
+        ballot1 = Ballot(
+            self.bob,
+            [self.dark_knight, self.angry_men, self.persona]
+        )
+
+        self.septemberVotingRound.add_ballot(ballot1)
+        self.septemberVotingRound.tally_votes()
+        self.septemberVotingRound.get_winner()
+
+        ballot2 = Ballot(
+            self.joy,
+            [self.persona, self.dark_knight, self.angry_men]
+        )
+
+        with self.assertRaises(ValueError):
+            self.septemberVotingRound.add_ballot(ballot2)
 if __name__ == "__main__":
     unittest.main()
 

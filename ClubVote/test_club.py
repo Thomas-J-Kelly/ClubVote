@@ -15,7 +15,7 @@ class TestVotingRound(unittest.TestCase):
         self.minions = Candidate("Minions", self.joy)
         self.persona = Candidate("Persona", self.joy)
         self.angry_men = Candidate("12 Angry Men", self.gart)
-        self.septemberVotingRound = VotingRound(start_time = datetime.date.today(), end_time=datetime.date.today() + datetime.timedelta(days=7))
+        self.septemberVotingRound = VotingRound(start_time = datetime.date.today(), end_time=datetime.date.today() + datetime.timedelta(days=7), name = "September Voting Round")
         self.septemberVotingRound.add_candidate(self.dark_knight)
         self.septemberVotingRound.add_candidate(self.angry_men)
         self.septemberVotingRound.add_candidate(self.persona)
@@ -207,7 +207,7 @@ class TestVotingRound(unittest.TestCase):
     def test_club_tracks_runoff_as_current_round(self):
         ballot1 = Ballot(
             self.bob,
-            [self.dark_knight, self.angry_men, self.persona]
+            [self.dark_knight, self.persona, self.angry_men]
         )
 
         ballot2 = Ballot(
@@ -229,6 +229,10 @@ class TestVotingRound(unittest.TestCase):
         self.assertIs(
             self.club.get_current_voting_round(),
             runoff
+        )
+        self.assertEqual(
+            runoff.name,
+            f"{self.septemberVotingRound.name} Runoff"
         )
 if __name__ == "__main__":
     unittest.main()

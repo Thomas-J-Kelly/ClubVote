@@ -40,7 +40,7 @@ class Ballot:
             self.ranked_choices = ranked_choices
 
 class VotingRound:
-    def __init__(self, start_time, end_time, ballots=None, candidates=None, results=None, winner=None, num_choices=3, is_running=True, votes_tallied = False):
+    def __init__(self, start_time, end_time, ballots=None, candidates=None, results=None, winner=None, num_choices=3, is_running=True, votes_tallied = False, name = None):
         self.start_time = start_time
         self.end_time = end_time
         self.ballots = ballots if ballots is not None else []
@@ -50,7 +50,7 @@ class VotingRound:
         self.num_choices = num_choices
         self.is_running = is_running
         self.votes_tallied = votes_tallied
-
+        self.name = name  
     def add_candidate(self, candidate):
         self.candidates.append(candidate)
         self.results[candidate] = 0
@@ -89,7 +89,7 @@ class VotingRound:
             self.is_running = False
             for candidate in winners:
                 print(f"Tie: {candidate.name} with {max_votes} votes.")
-            runoff_round = VotingRound(start_time=datetime.date.today(), end_time=datetime.date.today() + datetime.timedelta(days=2), num_choices = len(winners))
+            runoff_round = VotingRound(start_time=datetime.date.today(), end_time=datetime.date.today() + datetime.timedelta(days=2), num_choices = len(winners)    , name = f"{self.name} Runoff")
             for candidate in winners:
                 runoff_round.add_candidate(candidate)
             return runoff_round

@@ -97,6 +97,38 @@ class TestVotingRound(unittest.TestCase):
             expected_results
         )
 
+    def test_get_winner_before_tally(self):
+        ballot = Ballot(
+            self.bob,
+            [self.dark_knight, self.persona, self.minions]
+        )
+        self.septemberVotingRound.add_ballot(ballot)
+        with self.assertRaises(ValueError):
+            self.septemberVotingRound.get_winner()
+
+    def test_new_ballot_invalidates_tally(self):
+        ballot = Ballot(
+            self.bob,
+            [self.dark_knight, self.angry_men, self.persona]
+        )
+
+        self.septemberVotingRound.add_ballot(ballot)
+        self.septemberVotingRound.tally_votes()
+
+        self.assertTrue(self.septemberVotingRound.votes_tallied)
+
+        ballot2 = Ballot(
+            self.joy,
+            [self.persona, self.dark_knight, self.angry_men]
+        )
+
+        self.septemberVotingRound.add_ballot(ballot2)
+
+        self.assertFalse(self.septemberVotingRound.votes_tallied)
+
+        with self.assertRaises(ValueError):
+            self.septemberVotingRound.get_winner()
+
 if __name__ == "__main__":
     unittest.main()
 

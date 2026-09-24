@@ -35,7 +35,7 @@ class Ballot:
             self.ranked_choices = ranked_choices
 
 class VotingRound:
-    def __init__(self, start_time, end_time, ballots=None, candidates=None, results=None, winner=None, num_choices=3):
+    def __init__(self, start_time, end_time, ballots=None, candidates=None, results=None, winner=None, num_choices=3, is_running=True, votes_tallied = False):
         self.start_time = start_time
         self.end_time = end_time
         self.ballots = ballots if ballots is not None else []
@@ -43,7 +43,9 @@ class VotingRound:
         self.results = results if results is not None else {}
         self.winner = winner
         self.num_choices = num_choices
-        
+        self.is_running = is_running
+        self.votes_tallied = votes_tallied
+
     def add_candidate(self, candidate):
         self.candidates.append(candidate)
         self.results[candidate] = 0
@@ -59,18 +61,22 @@ class VotingRound:
             if ballot.member.ID not in [b.member.ID for b in self.ballots]:
                 if self.start_time <= current_time <= self.end_time:
                     self.ballots.append(ballot)
+                    self.votes_tallied = False
                 else:
                     raise ValueError("Voting is not currently open.")
             else:
                 raise ValueError(f"Member {ballot.member.name} has already submitted a ballot for this voting round.")
 
     def get_winner(self):
-        if not self.results:
-            raise ValueError("No votes have been tallied yet.")
+        if not self.is_running:
+            raise ValueError("Voting is not currently running.")
+        if not self.votes_tallied:
+            raise ValueError("Votes have not been tallied yet.")
         max_votes = max(self.results.values())
         winners = [candidate for candidate, votes in self.results.items() if votes == max_votes]
         if len(winners) == 1:
             self.winner = winners[0]
+            self.is_running = False
             return self.winner
         elif len(winners) > 1:
             for candidate in winners:
@@ -86,6 +92,7 @@ class VotingRound:
         for ballot in self.ballots:
             for rank, candidate in enumerate(ballot.ranked_choices, start=1):
                 self.results[candidate] += math.ceil(3 / rank)
+        self.votes_tallied = True
 
 
 

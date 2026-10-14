@@ -89,7 +89,7 @@ class VotingRound:
             self.is_running = False
             for candidate in winners:
                 print(f"Tie: {candidate.name} with {max_votes} votes.")
-            runoff_round = VotingRound(start_time=datetime.date.today(), end_time=datetime.date.today() + datetime.timedelta(days=2), num_choices = len(winners)    , name = f"{self.name} Runoff")
+            runoff_round = VotingRound(start_time=datetime.date.today(), end_time=datetime.date.today() + datetime.timedelta(days=2), num_choices = len(winners), name = f"{self.name} Runoff")
             for candidate in winners:
                 runoff_round.add_candidate(candidate)
             return runoff_round

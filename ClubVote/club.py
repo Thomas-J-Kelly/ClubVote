@@ -25,9 +25,10 @@ class Member:
         self.ID = ID
     
 class Candidate:
-    def __init__(self, name, nominator=None):
+    def __init__(self, name, nominator=None, ID=None):
         self.name = name
-        self.nominator = nominator  
+        self.nominator = nominator
+        self.ID = ID
         
 class Ballot:
     def __init__(self, member, ranked_choices=None):
